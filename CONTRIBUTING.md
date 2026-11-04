@@ -6,9 +6,9 @@ Contributions to ETNA UI are welcome.
 
 For substantial features or architecture changes, open an issue first to discuss the scope and intended behaviour.
 
-## Development environment
+## Development setup
 
-The maintainer's primary development environment is Fedora Linux. The project README documents the Fedora setup and required native dependencies.
+The project development instructions use Fedora Linux and are maintained in the main README.
 
 Clone the source and install the locked JavaScript dependencies:
 
@@ -34,7 +34,7 @@ npm test
 npm run lint
 ```
 
-For changes to the native Tauri shell, test the application in the Fedora development environment and document any new system dependencies.
+For changes to the native Tauri shell, test the application in the documented development environment and record any additional system dependencies.
 
 ## Pull requests
 

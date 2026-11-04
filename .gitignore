@@ -24,6 +24,15 @@ pnpm-debug.log*
 secrets/
 credentials.json
 
+# Local editor and iteration backups
+.backup-*/
+*.before-*
+
+# Stray local command artifacts
+/ai-ui@0.0.0
+/oxlint
+/tsc
+
 # Editor and OS files
 .vscode/*
 !.vscode/extensions.json
