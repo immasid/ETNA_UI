@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { ChatViewport } from '../components/ChatViewport'
 import { accentThemes } from '../lib/themes'
 import type { ChatMessage } from '../lib/chat/types'
@@ -40,7 +40,22 @@ describe('ChatViewport and Auto-Scroll', () => {
     expect(screen.getByText('Greetings operative')).toBeInTheDocument()
   })
 
-  it('displays Resume Auto-Scroll when user scrolls up away from bottom', () => {
+  it('keeps conversation scrolling inside a bounded scroll region', () => {
+    render(
+      <ChatViewport
+        messages={sampleMessages}
+        theme={theme}
+        isStreaming={false}
+      />,
+    )
+
+    const scrollContainer = screen.getByRole('log')
+    expect(scrollContainer.className).toContain('etna-chat-scroll')
+    expect(scrollContainer.className).toContain('min-h-0')
+    expect(scrollContainer.className).toContain('overflow-y-auto')
+  })
+
+  it('displays Resume Auto-Scroll when user scrolls up away from bottom', async () => {
     const { container } = render(
       <ChatViewport
         messages={sampleMessages}
@@ -73,6 +88,8 @@ describe('ChatViewport and Auto-Scroll', () => {
 
     // Clicking resume scrolls to bottom
     fireEvent.click(resumeButton)
-    expect(screen.queryByLabelText('Resume auto-scroll')).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByLabelText('Resume auto-scroll')).not.toBeInTheDocument()
+    })
   })
 })

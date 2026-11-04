@@ -33,7 +33,7 @@ export function Composer({
     if (!el) return
     el.style.height = 'auto'
     const newHeight = Math.min(el.scrollHeight, 180)
-    el.style.height = `${Math.max(newHeight, 38)}px`
+    el.style.height = `${Math.max(newHeight, 42)}px`
   }, [draft])
 
   const playTypingSound = () => {
@@ -55,7 +55,7 @@ export function Composer({
     setDraft('')
 
     if (textareaRef.current) {
-      textareaRef.current.style.height = '38px'
+      textareaRef.current.style.height = '42px'
     }
   }
 
@@ -95,14 +95,12 @@ export function Composer({
   }
 
   return (
-    <div className="relative z-10 p-3 sm:p-5">
-      <motion.div
-        className="flex items-end gap-2.5 rounded-2xl border bg-[#03080c]/85 px-3.5 py-2 shadow-[0_0_25px_rgba(0,0,0,0.18)] focus-within:bg-[#040a0f]/95"
-        style={{
-          borderColor: theme.border,
-        }}
-      >
+    <div className="relative z-10 w-full shrink-0 px-4 pb-5 pt-3 sm:px-6">
+      <div className="mx-auto w-full max-w-[780px]">
+      <motion.div className="etna-composer-dock">
+        <div className="etna-composer-row">
         <textarea
+          id="etna-prompt"
           ref={textareaRef}
           rows={1}
           aria-label="Message prompt"
@@ -112,17 +110,23 @@ export function Composer({
           onFocus={() => {
             void uiSounds.unlock()
           }}
-          placeholder="Enter command or query (Enter to send, Shift+Enter for newline)..."
-          className="max-h-[180px] min-h-[38px] min-w-0 flex-1 resize-none bg-transparent py-1.5 text-sm leading-relaxed text-white outline-none placeholder:text-white/20"
+          placeholder="Ask ETNA"
+          className="etna-composer-textarea max-h-[180px] min-h-[42px] min-w-0 flex-1 resize-none bg-transparent px-1 py-2 text-[14px] leading-relaxed text-white outline-none placeholder:text-white/35"
         />
 
         {isStreaming ? (
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.92 }}
+            whileHover={{ scale: 1.035, y: -1 }}
+            whileTap={{ scale: 0.94, y: 0 }}
+            transition={{
+              type: 'spring',
+              stiffness: 460,
+              damping: 32,
+              mass: 0.5,
+            }}
             type="button"
             onClick={handleStop}
-            className="mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-red-500/40 bg-red-950/30 text-red-400 transition hover:bg-red-900/40"
+            className="etna-composer-action etna-composer-stop mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-red-500/40 bg-red-950/30 text-red-400 transition hover:bg-red-900/40"
             aria-label="Stop generating response"
             title="Stop generation"
           >
@@ -130,18 +134,25 @@ export function Composer({
           </motion.button>
         ) : (
           <motion.button
-            whileHover={{
-              scale: 1.05,
-              boxShadow: `0 0 16px ${theme.glow}`,
+            whileHover={draft.trim() ? { scale: 1.035, y: -1 } : undefined}
+            whileTap={{ scale: 0.94, y: 0 }}
+            transition={{
+              type: 'spring',
+              stiffness: 460,
+              damping: 32,
+              mass: 0.5,
             }}
-            whileTap={{ scale: 0.92 }}
             type="button"
             onClick={handleSend}
             disabled={!draft.trim()}
-            className="mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-white/[0.03] transition-colors disabled:cursor-not-allowed disabled:opacity-25"
+            className="etna-composer-action etna-composer-send mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-colors disabled:cursor-not-allowed"
             style={{
-              borderColor: theme.border,
-              color: theme.primary,
+              borderColor: draft.trim()
+                ? theme.border
+                : 'rgba(255,255,255,0.07)',
+              color: draft.trim()
+                ? theme.primary
+                : 'rgba(210,220,230,0.28)',
             }}
             aria-label="Send message"
             title="Send (Enter)"
@@ -149,7 +160,10 @@ export function Composer({
             <ArrowUp size={16} strokeWidth={2} />
           </motion.button>
         )}
+        </div>
+
       </motion.div>
+      </div>
     </div>
   )
 }

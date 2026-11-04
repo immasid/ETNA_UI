@@ -38,7 +38,14 @@ describe('SettingsPanel', () => {
       />,
     )
 
-    const purpleThemeButton = screen.getByText('Neon Purple')
+    const themesCategory = screen.getByRole('button', {
+      name: /Themes/,
+    })
+    fireEvent.click(themesCategory)
+
+    const purpleThemeButton = screen.getByRole('button', {
+      name: /Neon Purple/,
+    })
     fireEvent.click(purpleThemeButton)
 
     expect(onAccentChange).toHaveBeenCalledWith('purple')

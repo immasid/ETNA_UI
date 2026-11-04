@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@fontsource/nunito/400-italic.css";
 
 :root {
   font-family:
@@ -50,4 +51,491 @@ button {
 ::selection {
   background: rgba(34, 211, 238, 0.18);
   color: white;
+}
+
+/* ETNA — PREMIUM WORDMARK */
+
+.etna-wordmark {
+  position: absolute;
+  top: clamp(1.2rem, 3.5vh, 2.3rem);
+  left: 50%;
+  z-index: 15;
+  width: max-content;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.etna-wordmark span {
+  display: block;
+  padding-right: 0.18em;
+
+  font-family: "Nunito", sans-serif;
+  font-size: clamp(3.1rem, 4.8vw, 3.9rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  line-height: 1.15;
+
+  background-image: linear-gradient(
+    110deg,
+    #cbb8e5 0%,
+    #b5c4e4 33%,
+    #b2d0d4 66%,
+    #e0cfad 100%
+  );
+
+  background-size: 100% 100%;
+  background-position: center;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+
+  text-shadow: none;
+  filter: none;
+}
+
+/* Respect the operating system's reduced-motion preference. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ETNA — refined audio volume control */
+
+.etna-volume-slider {
+  display: block;
+  height: 18px;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 5px;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.etna-volume-slider::-webkit-slider-runnable-track {
+  height: 5px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.etna-volume-slider::-moz-range-track {
+  height: 5px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.etna-volume-slider::-webkit-slider-thumb {
+  width: 15px;
+  height: 15px;
+  margin-top: -5px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 2px solid #e7e1f0;
+  border-radius: 50%;
+  background: #a99acb;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
+  transition:
+    transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 150ms ease;
+}
+
+.etna-volume-slider::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: 2px solid #e7e1f0;
+  border-radius: 50%;
+  background: #a99acb;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
+  transition:
+    transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 150ms ease;
+}
+
+.etna-volume-slider:hover::-webkit-slider-thumb {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 4px rgba(169, 154, 203, 0.12);
+}
+
+.etna-volume-slider:active::-webkit-slider-thumb {
+  transform: scale(1.25);
+}
+
+.etna-volume-slider:hover::-moz-range-thumb {
+  transform: scale(1.15);
+}
+
+.etna-volume-slider:active::-moz-range-thumb {
+  transform: scale(1.25);
+}
+
+.etna-volume-slider:focus-visible {
+  outline: 2px solid rgba(169, 154, 203, 0.7);
+  outline-offset: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .etna-volume-slider::-webkit-slider-thumb,
+  .etna-volume-slider::-moz-range-thumb {
+    transition: none;
+  }
+}
+
+
+/* ETNA — GLASS SIDEBAR */
+
+.etna-glass-sidebar {
+  -webkit-backdrop-filter: blur(28px) saturate(145%);
+  backdrop-filter: blur(28px) saturate(145%);
+  isolation: isolate;
+}
+
+.etna-glass-sidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      155deg,
+      rgba(255,255,255,0.055) 0%,
+      rgba(255,255,255,0.012) 35%,
+      transparent 70%
+    );
+}
+
+.etna-glass-sidebar > * {
+  position: relative;
+  z-index: 1;
+}
+
+.etna-sidebar-wordmark {
+  display: block;
+  font-family: "Nunito", sans-serif;
+  font-size: 1.9rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.17em;
+  line-height: 1;
+  padding-right: 0.17em;
+  color: transparent;
+  background-image: linear-gradient(
+    110deg,
+    #E5DFED 0%,
+    #BFC9DA 46%,
+    #D7D3E5 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ETNA — MAIN GLASS WINDOW */
+.etna-glass-main {
+  background: rgba(8, 14, 21, 0.54);
+  -webkit-backdrop-filter: blur(30px) saturate(145%);
+  backdrop-filter: blur(30px) saturate(145%);
+  isolation: isolate;
+}
+
+.etna-glass-main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,0.045),
+    rgba(255,255,255,0.012) 32%,
+    transparent 68%,
+    rgba(130,165,195,0.018)
+  );
+}
+
+/* ETNA — PREMIUM FLOATING COMPOSER */
+
+.etna-composer-dock {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  overflow: hidden;
+  padding: 13px 15px 10px;
+  border: 1px solid var(--accent-border, rgba(180,210,235,0.22));
+  border-radius: 23px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.065),
+      rgba(255,255,255,0.018) 48%,
+      rgba(120,160,195,0.025)
+    ),
+    rgba(7,15,23,0.90);
+
+  -webkit-backdrop-filter: blur(28px) saturate(145%);
+  backdrop-filter: blur(28px) saturate(145%);
+
+  box-shadow:
+    0 18px 55px rgba(0,0,0,0.24),
+    inset 0 1px 0 rgba(255,255,255,0.085),
+    inset 0 -1px 0 rgba(255,255,255,0.025);
+
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.etna-composer-dock::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  left: 14%;
+  width: 72%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(235,245,255,0.35),
+    transparent
+  );
+}
+
+
+
+.etna-composer-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  min-width: 0;
+}
+
+.etna-composer-dock textarea {
+  min-width: 0;
+  color: rgba(239,245,250,0.95);
+  caret-color: var(--accent, #A7CDE5);
+}
+
+.etna-composer-dock textarea::placeholder {
+  color: rgba(192,207,222,0.38);
+  transition: color 180ms ease;
+}
+
+
+
+
+
+.etna-composer-dock button[aria-label="Send message"] {
+  width: 41px;
+  height: 41px;
+  margin-bottom: 1px;
+  border-radius: 14px;
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,0.105),
+    rgba(255,255,255,0.035)
+  );
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.etna-composer-dock button[aria-label="Send message"]:not(:disabled):hover {
+  background: var(--accent-soft, rgba(120,180,220,0.12));
+}
+
+@media (max-width: 540px) {
+  .etna-composer-dock {
+    padding: 11px 11px 9px;
+    border-radius: 19px;
+  }
+
+  .etna-composer-hints {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .etna-composer-dock,
+  .etna-composer-dock textarea::placeholder {
+    transition: none;
+  }
+}
+
+
+/* ETNA — REFINED GLASS COMPOSER */
+.etna-composer-dock {
+  background: linear-gradient(
+    155deg,
+    rgba(18, 27, 39, 0.94) 0%,
+    rgba(8, 14, 22, 0.97) 100%
+  );
+  border-color: rgba(200, 218, 235, 0.16);
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.075);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.etna-composer-dock:focus-within {
+  border-color: rgba(200, 218, 235, 0.16);
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.075);
+}
+
+.etna-composer-dock textarea::placeholder {
+  color: rgba(192, 207, 222, 0.48);
+}
+
+
+/* ETNA — BATCH 1 INTERACTION REFINEMENT */
+
+/* Smooth, restrained multiline composer expansion. */
+.etna-composer-textarea {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  transition: height 150ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Shared action-button transitions without external glow. */
+.etna-composer-action {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+/* Send: subtle glass surface when enabled. */
+.etna-composer-send:not(:disabled) {
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,0.11),
+    rgba(255,255,255,0.045)
+  );
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.09);
+}
+
+.etna-composer-send:not(:disabled):hover {
+  background: var(--accent-soft, rgba(120,180,220,0.12));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.etna-composer-send:not(:disabled):active {
+  background: rgba(255,255,255,0.09);
+}
+
+/* Empty Send: quiet and visibly unavailable. */
+.etna-composer-send:disabled {
+  background: rgba(255,255,255,0.018);
+  border-color: rgba(255,255,255,0.065) !important;
+  color: rgba(210,220,230,0.25) !important;
+  opacity: 0.62;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Stop remains visually distinct without becoming luminous. */
+.etna-composer-stop:hover {
+  background: rgba(127,29,29,0.32);
+  border-color: rgba(248,113,113,0.55);
+}
+
+/* Sidebar hover transitions complement the existing motion. */
+.etna-sidebar-button {
+  transition:
+    background-color 170ms ease,
+    border-color 170ms ease,
+    color 170ms ease;
+}
+
+/* Keyboard-only focus indicators; mouse clicks do not trigger them. */
+.etna-sidebar-button:focus-visible,
+.etna-composer-action:focus-visible {
+  outline: 2px solid rgba(205,220,235,0.66);
+  outline-offset: 3px;
+}
+
+/* Preserve a clean appearance for pointer interaction. */
+.etna-sidebar-button:focus:not(:focus-visible),
+.etna-composer-action:focus:not(:focus-visible) {
+  outline: none;
+}
+
+
+/* ETNA — BATCH 2 RESPONSIVE LAYOUT */
+
+/* Keep conversation scrolling inside the available chat height. */
+.etna-chat-scroll {
+  min-height: 0;
+  min-width: 0;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(185, 205, 225, 0.20) transparent;
+}
+
+.etna-chat-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.etna-chat-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.etna-chat-scroll::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: rgba(185, 205, 225, 0.18);
+}
+
+.etna-chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(185, 205, 225, 0.32);
+}
+
+/* Prevent long text and Markdown from forcing wider message columns. */
+.markdown-body {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.markdown-body pre {
+  width: max-content;
+  min-width: 100%;
+  max-width: 100%;
+}
+
+.markdown-body code {
+  overflow-wrap: normal;
+}
+
+/* Code blocks remain horizontally scrollable instead of widening the app. */
+.markdown-body > div {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 540px) {
+  .markdown-body {
+    font-size: 13px;
+  }
+
+  .etna-chat-scroll {
+    scrollbar-width: thin;
+  }
 }

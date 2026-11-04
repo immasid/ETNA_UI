@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import { motion } from 'motion/react'
 import { AlertTriangle, Bot } from 'lucide-react'
 import type { ChatMessage } from '../lib/chat/types'
 import type { AccentTheme } from '../lib/themes'
@@ -7,6 +8,15 @@ import { MarkdownView } from './MarkdownView'
 interface MessageItemProps {
   message: ChatMessage
   theme: AccentTheme
+}
+
+const messageEase: [number, number, number, number] = [
+  0.22, 1, 0.36, 1,
+]
+
+const messageEntrance = {
+  duration: 0.28,
+  ease: messageEase,
 }
 
 export const MessageItem = memo(function MessageItem({
@@ -25,15 +35,21 @@ export const MessageItem = memo(function MessageItem({
 
   if (isUser) {
     return (
-      <div className="flex w-full justify-end px-3 py-1.5 sm:px-4">
-        <div className="flex max-w-[85%] flex-col items-end gap-1 sm:max-w-[75%]">
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -4 }}
+        transition={messageEntrance}
+        className="flex min-w-0 w-full justify-end px-3 py-1.5 sm:px-4"
+      >
+        <div className="flex w-fit min-w-0 max-w-[88%] flex-col items-end gap-1 sm:max-w-[75%]">
           <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-white/40">
             <span>You</span>
             <span>•</span>
             <span>{formattedTime}</span>
           </div>
           <div
-            className="rounded-2xl border bg-[#06121d]/90 px-4 py-2.5 text-sm leading-relaxed text-white shadow-lg"
+            className="min-w-0 max-w-full break-words rounded-2xl border bg-[#06121d]/90 px-4 py-2.5 text-sm leading-relaxed text-white shadow-lg"
             style={{
               borderColor: theme.border,
             }}
@@ -41,14 +57,20 @@ export const MessageItem = memo(function MessageItem({
             <p className="whitespace-pre-wrap break-words">{message.content}</p>
           </div>
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   // Assistant Message
   return (
-    <div className="flex w-full justify-start px-3 py-2 sm:px-4">
-      <div className="flex max-w-[92%] items-start gap-3 sm:max-w-[85%]">
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={messageEntrance}
+      className="flex min-w-0 w-full justify-start px-3 py-2 sm:px-4"
+    >
+      <div className="flex w-full min-w-0 max-w-[92%] items-start gap-3 sm:max-w-[85%]">
         {/* AVATAR BADGE */}
         <div
           className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border bg-[#04090e]/90 shadow-sm"
@@ -61,7 +83,7 @@ export const MessageItem = memo(function MessageItem({
         </div>
 
         {/* CONTENT BUBBLE */}
-        <div className="flex flex-1 flex-col gap-1.5">
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <span
               className="text-[10px] font-semibold uppercase tracking-wider"
@@ -84,7 +106,7 @@ export const MessageItem = memo(function MessageItem({
           </div>
 
           <div
-            className="rounded-2xl border bg-[#04090e]/80 p-4 shadow-xl backdrop-blur-md"
+            className="min-w-0 max-w-full rounded-2xl border bg-[#04090e]/80 p-4 shadow-xl backdrop-blur-md"
             style={{
               borderColor: 'rgba(255,255,255,0.08)',
             }}
@@ -143,6 +165,6 @@ export const MessageItem = memo(function MessageItem({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 })

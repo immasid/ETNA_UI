@@ -2,19 +2,19 @@
 
 A Linux desktop chat-interface project built with **Tauri 2**, **React 19**, **TypeScript**, **Vite**, **Tailwind CSS 4**, and **Motion**.
 
-This repository is intended to hold the **source code and development documentation**. It is not an installer or binary-download repository. When setting up a fresh Fedora or CachyOS installation, use the commands below to install the development tools, clone the source, install dependencies, and launch the application.
+This repository contains the application's **source code and developer documentation**. It is not a binary-download or installer repository. The development setup in this README is written for **Fedora Linux**, the maintainer's primary development environment.
 
-> **Current application status:** the interface includes a chat-style layout, message composer, theme/settings panel, procedural UI sounds, window-activity indicators, and a deterministic local mock chat engine. The current mock engine does not connect to an AI provider, remote API, or local LLM.
+> **Current application status:** ETNA UI includes a chat-style interface, message composer, theme/settings panel, procedural UI sounds, window-activity indicators, and a deterministic local mock chat engine. The mock engine does not connect to an AI provider, remote API, or local LLM.
 
-## What is in the project
+## Features
 
 - Tauri 2 desktop shell with a Rust backend scaffold.
-- React 19 + TypeScript frontend.
+- React 19 and TypeScript frontend.
 - Chat-style interface and message composer.
 - Streaming-style demo responses from a local mock engine.
-- Theme selection and sound preferences.
+- Accent theme selection and sound preferences.
 - Window activity states (active, ambient, suspended).
-- Vitest and Testing Library tests.
+- Automated tests using Vitest and Testing Library.
 
 ### Demo chat commands
 
@@ -25,7 +25,7 @@ This repository is intended to hold the **source code and development documentat
 | `/error` | Triggers a simulated streaming error |
 | Any other text | Displays the default local demo response |
 
-These are mock/demo behaviours. They do not send prompts to an AI model.
+These are local mock behaviours. Prompts are not sent to an AI model.
 
 ## Technology stack
 
@@ -38,120 +38,22 @@ These are mock/demo behaviours. They do not send prompts to an AI model.
 | Styling | Tailwind CSS 4 |
 | Animation | Motion |
 | Icons | Lucide React |
-| Testing | Vitest, Testing Library, jsdom |
+| Tests | Vitest, Testing Library, jsdom |
 | Linting | Oxlint |
 
-## Fresh OS setup
+## Fedora development setup
 
-The following steps are for reinstalling your development machine and rebuilding the environment from source. They install development dependencies only; they do not download or install a prebuilt application package.
+These instructions recreate the development environment after a fresh Fedora installation. They install the tools needed to build and run the application **from source**. No prebuilt application package is downloaded or installed.
 
-### CachyOS (Arch-based)
-
-#### 1. Update the system
-
-```bash
-sudo pacman -Syu
-```
-
-Do not perform a partial upgrade on an Arch-based distribution.
-
-#### 2. Install all system dependencies
-
-```bash
-sudo pacman -S --needed \
-  git \
-  base-devel \
-  webkit2gtk-4.1 \
-  curl \
-  wget \
-  file \
-  openssl \
-  appmenu-gtk-module \
-  libappindicator-gtk3 \
-  librsvg \
-  xdotool \
-  pkgconf \
-  nodejs \
-  npm \
-  rustup
-```
-
-These are the Linux development dependencies used by the Tauri 2 toolchain, together with Git, Node.js/npm and rustup.
-
-#### 3. Set up Rust
-
-```bash
-rustup default stable
-rustup update stable
-rustc --version
-cargo --version
-```
-
-If `rustup` is not found after installation, open a new terminal. For Bash/Zsh, load the environment with:
-
-```bash
-source "$HOME/.cargo/env"
-```
-
-For Fish:
-
-```fish
-fish_add_path "$HOME/.cargo/bin"
-```
-
-#### 4. Check Node.js and npm
-
-```bash
-node --version
-npm --version
-```
-
-Use Node.js **26.x** for the dependency versions currently recorded in this repository's lockfile. If your distribution repository provides an older version, install Node.js 26 using a trusted Node version manager or the official Node.js downloads page: https://nodejs.org/en/download.
-
-#### 5. Install the Tauri command-line tool
-
-The repository uses Tauri 2. Install the Rust CLI once per OS installation:
-
-```bash
-cargo install tauri-cli --version "^2.0.0" --locked
-```
-
-Verify:
-
-```bash
-cargo tauri --version
-```
-
-#### 6. Clone the source repository
-
-```bash
-git clone https://github.com/immasid/ETNA_UI.git
-cd ETNA_UI
-```
-
-#### 7. Install project dependencies
-
-```bash
-npm ci
-```
-
-#### 8. Launch the desktop application from source
-
-```bash
-cargo tauri dev
-```
-
-This compiles the Rust desktop shell and starts the configured Vite development server. Keep the terminal open while developing.
-
-### Fedora
-
-#### 1. Update Fedora
+### 1. Update Fedora
 
 ```bash
 sudo dnf upgrade --refresh
 ```
 
-#### 2. Install system dependencies
+### 2. Install Tauri and native build dependencies
+
+The following packages are required for the Tauri 2 Linux development environment:
 
 ```bash
 sudo dnf install \
@@ -164,9 +66,7 @@ sudo dnf install \
   libappindicator-gtk3-devel \
   librsvg2-devel \
   libxdo-devel \
-  pkgconf-pkg-config \
-  nodejs \
-  npm
+  pkgconf-pkg-config
 ```
 
 Install the C development toolchain:
@@ -175,76 +75,92 @@ Install the C development toolchain:
 sudo dnf group install "c-development"
 ```
 
-#### 3. Install Rust with rustup
+### 3. Install Node.js and npm
+
+Install Node.js and npm from Fedora's enabled repositories:
 
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+sudo dnf install nodejs npm
 ```
 
-Choose the default stable toolchain when prompted. Then load the environment in Bash/Zsh:
-
-```bash
-source "$HOME/.cargo/env"
-rustup default stable
-rustup update stable
-rustc --version
-cargo --version
-```
-
-For Fish:
-
-```fish
-fish_add_path "$HOME/.cargo/bin"
-```
-
-#### 4. Check Node.js and npm
+Verify the versions:
 
 ```bash
 node --version
 npm --version
 ```
 
-Use Node.js **26.x** for the dependency versions currently recorded in this repository's lockfile. If Fedora's enabled repositories provide an older version, install Node.js 26 using a trusted Node version manager or the official Node.js downloads page: https://nodejs.org/en/download.
+The maintainer's current development environment uses **Node.js 26.12.1**. Use Node.js 26.x for the closest match. If Fedora's enabled repositories provide an older version, install a compatible release from the [official Node.js download page](https://nodejs.org/en/download/).
 
-#### 5. Install the Tauri command-line tool
+### 4. Install Rust
+
+Tauri uses Rust for its native desktop shell. Install the stable Rust toolchain with rustup:
 
 ```bash
-cargo install tauri-cli --version "^2.0.0" --locked
-cargo tauri --version
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-#### 6. Clone the source repository
+Choose the default installation when prompted. Then load the Rust environment in the current Bash/Zsh session and update the stable toolchain:
+
+```bash
+source "$HOME/.cargo/env"
+rustup default stable
+rustup update stable
+```
+
+Verify the installation:
+
+```bash
+rustc --version
+cargo --version
+```
+
+For Fish shell, add Cargo to the shell's PATH:
+
+```fish
+fish_add_path "$HOME/.cargo/bin"
+```
+
+### 5. Clone the source repository
 
 ```bash
 git clone https://github.com/immasid/ETNA_UI.git
 cd ETNA_UI
 ```
 
-#### 7. Install project dependencies
+### 6. Install JavaScript dependencies
+
+The Tauri JavaScript CLI is already listed in the project's development dependencies. Install the exact dependency versions recorded in the lockfile:
 
 ```bash
 npm ci
 ```
 
-#### 8. Launch the desktop application from source
+Verify the local Tauri CLI:
 
 ```bash
-cargo tauri dev
+npx tauri --version
 ```
 
-This compiles the Rust desktop shell and starts the configured Vite development server.
+### 7. Launch ETNA UI from source
+
+```bash
+npx tauri dev
+```
+
+This starts the Vite development server, compiles the Rust desktop shell, and opens the native application window. Keep the terminal open while developing.
 
 ## Daily development commands
 
-Run these from the repository root after completing the OS setup.
+Run these commands from the repository root after completing the Fedora setup.
 
-### Launch the native desktop window
+### Launch the native desktop application
 
 ```bash
-cargo tauri dev
+npx tauri dev
 ```
 
-### Run only the frontend in a browser
+### Run the frontend in a browser
 
 ```bash
 npm run dev
@@ -252,15 +168,25 @@ npm run dev
 
 Vite prints the local development URL in the terminal. The Tauri configuration currently uses `http://localhost:5173`.
 
-### Build the frontend and run checks
+### Build and validate the frontend
 
 ```bash
 npm run build
-npm test
-npm run lint
 ```
 
-The build command type-checks the TypeScript project and creates frontend assets in `dist/`. It does not create an installer; compiled output is a local development/build artifact and should not be committed.
+This runs the TypeScript project build and creates frontend assets in `dist/`. It does not create an installer.
+
+### Run automated tests
+
+```bash
+npm test
+```
+
+### Run lint checks
+
+```bash
+npm run lint
+```
 
 ### Preview the frontend build
 
@@ -268,58 +194,51 @@ The build command type-checks the TypeScript project and creates frontend assets
 npm run preview
 ```
 
-## Quick setup: CachyOS after a fresh install
+## Quick setup after a fresh Fedora installation
 
-For convenience, the essential CachyOS setup commands are collected here. Review the commands above for explanations and troubleshooting.
-
-```bash
-sudo pacman -Syu
-
-sudo pacman -S --needed \
-  git base-devel webkit2gtk-4.1 curl wget file openssl \
-  appmenu-gtk-module libappindicator-gtk3 librsvg xdotool pkgconf \
-  nodejs npm rustup
-
-rustup default stable
-rustup update stable
-
-cargo install tauri-cli --version "^2.0.0" --locked
-
-git clone https://github.com/immasid/ETNA_UI.git
-cd ETNA_UI
-
-npm ci
-cargo tauri dev
-```
-
-## Quick setup: Fedora after a fresh install
+For convenience, the complete source-development setup is collected here. It assumes a Bash or Zsh terminal and that the Fedora Node.js package provides a version compatible with the project.
 
 ```bash
+# Update Fedora
 sudo dnf upgrade --refresh
 
+# Install native build dependencies and Git
 sudo dnf install \
-  git webkit2gtk4.1-devel openssl-devel curl wget file \
-  libappindicator-gtk3-devel librsvg2-devel libxdo-devel \
-  pkgconf-pkg-config nodejs npm
+  git \
+  webkit2gtk4.1-devel \
+  openssl-devel \
+  curl \
+  wget \
+  file \
+  libappindicator-gtk3-devel \
+  librsvg2-devel \
+  libxdo-devel \
+  pkgconf-pkg-config
 
+# Install the C development toolchain
 sudo dnf group install "c-development"
 
+# Install Node.js and npm
+sudo dnf install nodejs npm
+
+# Install Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env"
-
 rustup default stable
 rustup update stable
 
-cargo install tauri-cli --version "^2.0.0" --locked
-
+# Clone ETNA UI
 git clone https://github.com/immasid/ETNA_UI.git
 cd ETNA_UI
 
+# Install locked project dependencies, including the Tauri CLI
 npm ci
-cargo tauri dev
+
+# Launch the desktop application from source
+npx tauri dev
 ```
 
-Before running `npm ci`, verify that Node.js is version 26.x. If not, install Node.js 26 using a trusted version manager or https://nodejs.org/en/download.
+The maintainer currently develops with Node.js 26.12.1. Check `node --version` before installing project dependencies; use the [official Node.js downloads](https://nodejs.org/en/download/) if the Fedora package is older than the version required by the project's toolchain.
 
 ## Project structure
 
@@ -358,51 +277,49 @@ The interface stores preferences in browser local storage. Current preference ke
 - `ai-ui-sound-settings`
 - `ai-ui-accent-theme`
 
-Conversation state is managed by the chat store. Clearing local application data may remove saved preferences and conversations.
+Conversation state is managed by the chat store. Clearing the application's local data may remove saved preferences and conversations.
 
-The currently inspected chat engine is a mock and does not require an AI API key. Never commit passwords, API keys, access tokens, private keys, or personal data. Keep local `.env` files and other secrets out of Git.
+The current chat engine is a local mock and does not require an AI API key. Never commit passwords, API keys, access tokens, private keys, or personal data. Keep local `.env` files and other secrets out of Git.
 
 ## Troubleshooting
 
-### `webkit2gtk-4.1` is not found
+### WebKitGTK is not found
 
-Check whether pkg-config can locate WebKitGTK:
+Check whether pkg-config can locate WebKitGTK 4.1:
 
 ```bash
 pkg-config --modversion webkit2gtk-4.1
 ```
 
-If it cannot, install the matching Tauri WebKitGTK development dependency for your distribution. Reopen the terminal after package installation if needed.
+If the package cannot be found, install `webkit2gtk4.1-devel` and reopen the terminal.
 
-### `cargo` or `rustup` is not found
+### Rust or Cargo is not found
 
-Open a new terminal or add Cargo's bin directory to PATH:
-
-Bash/Zsh:
+Load the rustup environment:
 
 ```bash
 source "$HOME/.cargo/env"
 ```
 
-Fish:
+For Fish shell:
 
 ```fish
 fish_add_path "$HOME/.cargo/bin"
 ```
 
-### Node.js version is too old
+### Node.js is too old
 
-Check:
+Check the installed version:
 
 ```bash
 node --version
 ```
 
-Use Node.js 26.x for the dependency versions currently locked by this repository.
+The maintainer's current environment uses Node.js 26.12.1. Install a compatible release from the [official Node.js downloads](https://nodejs.org/en/download/) if necessary.
 
 ### npm dependency installation fails
 
-Reinstall from the committed lockfile:
+Recreate the dependencies from the committed lockfile:
 
 ```bash
 rm -rf node_modules
@@ -411,14 +328,19 @@ npm ci
 
 ### The browser frontend works but the Tauri window does not
 
-The browser dev server does not verify native Linux libraries or the Rust backend. Check the Tauri prerequisites, verify `pkg-config --modversion webkit2gtk-4.1`, and review the terminal output from `cargo tauri dev`.
+The browser development server does not verify the native Rust and Linux dependencies. Confirm that WebKitGTK 4.1 is installed, then review the terminal output from:
+
+```bash
+npx tauri dev
+```
 
 ### Tauri CLI is not found
 
-Install it with:
+From the repository root, reinstall the project dependencies and check the local CLI:
 
 ```bash
-cargo install tauri-cli --version "^2.0.0" --locked
+npm ci
+npx tauri --version
 ```
 
 ## Contributing
@@ -439,9 +361,8 @@ No `LICENSE` file is currently present. Until a license is added, all rights are
 Email: [mesiddarthh@outlook.com](mailto:mesiddarthh@outlook.com)  
 GitHub: [@immasid](https://github.com/immasid)
 
-## Official setup references
+## Official references
 
-- [Tauri 2 Linux prerequisites](https://v2.tauri.app/start/prerequisites/)
-- [Tauri 2 CLI and development workflow](https://v2.tauri.app/start/create-project/)
+- [Tauri 2 prerequisites — Fedora setup](https://v2.tauri.app/start/prerequisites/#fedora)
 - [Rust installation](https://www.rust-lang.org/tools/install)
-- [Node.js downloads](https://nodejs.org/en/download)
+- [Node.js downloads](https://nodejs.org/en/download/)

@@ -4,11 +4,13 @@ Contributions to ETNA UI are welcome.
 
 ## Before starting
 
-For substantial features or architecture changes, open an issue first to discuss scope and intended behaviour.
+For substantial features or architecture changes, open an issue first to discuss the scope and intended behaviour.
 
-## Development setup
+## Development environment
 
-Follow the Fedora or CachyOS setup in the main README, then:
+The maintainer's primary development environment is Fedora Linux. The project README documents the Fedora setup and required native dependencies.
+
+Clone the source and install the locked JavaScript dependencies:
 
 ```bash
 git clone https://github.com/immasid/ETNA_UI.git
@@ -16,11 +18,15 @@ cd ETNA_UI
 npm ci
 ```
 
-For native desktop development, install the Tauri CLI and platform dependencies as described in the README.
+The Tauri CLI is installed as a project development dependency. Start the native application with:
+
+```bash
+npx tauri dev
+```
 
 ## Quality checks
 
-Run the relevant checks before opening a pull request:
+Run these checks before opening a pull request:
 
 ```bash
 npm run build
@@ -28,7 +34,7 @@ npm test
 npm run lint
 ```
 
-For Tauri changes, also test the native application on a Linux desktop with the required system libraries installed.
+For changes to the native Tauri shell, test the application in the Fedora development environment and document any new system dependencies.
 
 ## Pull requests
 
@@ -36,9 +42,9 @@ For Tauri changes, also test the native application on a Linux desktop with the 
 - Explain the motivation and user-visible impact.
 - Include screenshots for interface changes.
 - Add or update tests where practical.
-- Document new dependencies, configuration, and platform requirements.
+- Document new dependencies and configuration.
 - Do not commit generated build output, local environment files, credentials, or personal data.
 
 ## Implementation scope
 
-The current chat implementation is a deterministic mock engine. Do not describe a provider/model integration as complete unless the provider code, safe credential handling, error handling, and tests are included.
+The current chat implementation is a deterministic mock engine. Do not describe an AI provider or model integration as complete unless the provider code, safe credential handling, error handling, and tests are included.
