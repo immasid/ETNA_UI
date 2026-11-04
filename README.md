@@ -281,7 +281,6 @@ sudo pacman -S --needed \
 rustup default stable
 rustup update stable
 
-
 git clone https://github.com/immasid/ETNA_UI.git
 cd ETNA_UI
 
@@ -306,7 +305,6 @@ source "$HOME/.cargo/env"
 
 rustup default stable
 rustup update stable
-
 
 git clone https://github.com/immasid/ETNA_UI.git
 cd ETNA_UI
