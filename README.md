@@ -98,7 +98,7 @@ sudo dnf install \
 Install the C development toolchain group:
 
 ```bash
-sudo dnf group install "C Development Tools and Libraries"
+sudo dnf group install "c-development"
 ```
 
 If your Fedora release uses a different translated group name, inspect available groups with `dnf group list`.
