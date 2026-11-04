@@ -6,6 +6,31 @@ import { accentThemes } from '../lib/themes'
 describe('Composer', () => {
   const theme = accentThemes[0]
 
+  it('shows the Ask ETNA prompt and disables Send while empty', () => {
+    const onSend = vi.fn()
+    const onStop = vi.fn()
+
+    render(
+      <Composer
+        onSend={onSend}
+        onStop={onStop}
+        isStreaming={false}
+        theme={theme}
+      />,
+    )
+
+    expect(screen.getByPlaceholderText('Ask ETNA')).toBeInTheDocument()
+
+    const sendButton = screen.getByLabelText('Send message')
+    expect(sendButton).toBeDisabled()
+
+    fireEvent.change(screen.getByLabelText('Message prompt'), {
+      target: { value: 'Hello ETNA' },
+    })
+
+    expect(sendButton).toBeEnabled()
+  })
+
   it('does not send on empty input', () => {
     const onSend = vi.fn()
     const onStop = vi.fn()

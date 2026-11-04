@@ -108,18 +108,17 @@ npm --version
 
 Use Node.js **26.x** for the dependency versions currently recorded in this repository's lockfile. If your distribution repository provides an older version, install Node.js 26 using a trusted Node version manager or the official Node.js downloads page: https://nodejs.org/en/download.
 
-#### 5. Install the Tauri command-line tool
+#### 5. Verify the Tauri command-line tool
 
-The repository uses Tauri 2. Install the Rust CLI once per OS installation:
+The Tauri JavaScript CLI is included as a project development dependency and installed automatically by `npm ci`.
 
 ```bash
-cargo install tauri-cli --version "^2.0.0" --locked
 ```
 
 Verify:
 
 ```bash
-cargo tauri --version
+npx tauri --version
 ```
 
 #### 6. Clone the source repository
@@ -138,7 +137,7 @@ npm ci
 #### 8. Launch the desktop application from source
 
 ```bash
-cargo tauri dev
+npx tauri dev
 ```
 
 This compiles the Rust desktop shell and starts the configured Vite development server. Keep the terminal open while developing.
@@ -206,11 +205,10 @@ npm --version
 
 Use Node.js **26.x** for the dependency versions currently recorded in this repository's lockfile. If Fedora's enabled repositories provide an older version, install Node.js 26 using a trusted Node version manager or the official Node.js downloads page: https://nodejs.org/en/download.
 
-#### 5. Install the Tauri command-line tool
+#### 5. Verify the Tauri command-line tool
 
 ```bash
-cargo install tauri-cli --version "^2.0.0" --locked
-cargo tauri --version
+npx tauri --version
 ```
 
 #### 6. Clone the source repository
@@ -229,7 +227,7 @@ npm ci
 #### 8. Launch the desktop application from source
 
 ```bash
-cargo tauri dev
+npx tauri dev
 ```
 
 This compiles the Rust desktop shell and starts the configured Vite development server.
@@ -241,7 +239,7 @@ Run these from the repository root after completing the OS setup.
 ### Launch the native desktop window
 
 ```bash
-cargo tauri dev
+npx tauri dev
 ```
 
 ### Run only the frontend in a browser
@@ -283,13 +281,12 @@ sudo pacman -S --needed \
 rustup default stable
 rustup update stable
 
-cargo install tauri-cli --version "^2.0.0" --locked
 
 git clone https://github.com/immasid/ETNA_UI.git
 cd ETNA_UI
 
 npm ci
-cargo tauri dev
+npx tauri dev
 ```
 
 ## Quick setup: Fedora after a fresh install
@@ -310,13 +307,12 @@ source "$HOME/.cargo/env"
 rustup default stable
 rustup update stable
 
-cargo install tauri-cli --version "^2.0.0" --locked
 
 git clone https://github.com/immasid/ETNA_UI.git
 cd ETNA_UI
 
 npm ci
-cargo tauri dev
+npx tauri dev
 ```
 
 Before running `npm ci`, verify that Node.js is version 26.x. If not, install Node.js 26 using a trusted version manager or https://nodejs.org/en/download.
@@ -411,14 +407,15 @@ npm ci
 
 ### The browser frontend works but the Tauri window does not
 
-The browser dev server does not verify native Linux libraries or the Rust backend. Check the Tauri prerequisites, verify `pkg-config --modversion webkit2gtk-4.1`, and review the terminal output from `cargo tauri dev`.
+The browser dev server does not verify native Linux libraries or the Rust backend. Check the Tauri prerequisites, verify `pkg-config --modversion webkit2gtk-4.1`, and review the terminal output from `npx tauri dev`.
 
 ### Tauri CLI is not found
 
-Install it with:
+From the repository root, reinstall dependencies and verify the local CLI:
 
 ```bash
-cargo install tauri-cli --version "^2.0.0" --locked
+npm ci
+npx tauri --version
 ```
 
 ## Contributing

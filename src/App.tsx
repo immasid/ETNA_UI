@@ -9,6 +9,7 @@ import type {
 } from 'react'
 import {
   AnimatePresence,
+  MotionConfig,
   motion,
 } from 'motion/react'
 import {
@@ -59,6 +60,10 @@ function loadSoundSettings(): SoundSettings {
         typeof record.master === 'boolean'
           ? record.master
           : defaultSettings.master,
+      volume:
+        typeof record.volume === 'number' && Number.isFinite(record.volume)
+          ? Math.round(Math.max(0, Math.min(100, record.volume)))
+          : defaultSettings.volume,
       hover:
         typeof record.hover === 'boolean'
           ? record.hover
@@ -95,19 +100,45 @@ function loadAccentTheme(): AccentThemeId {
 }
 
 function MainApp() {
-  const [sidebarExpanded, setSidebarExpanded] = useState(true)
+  const [sidebarExpanded, setSidebarExpanded] = useState(
+    () => typeof window === 'undefined' || window.innerWidth > 760,
+  )
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [soundSettings, setSoundSettings] = useState<SoundSettings>(loadSoundSettings)
   const [accentThemeId, setAccentThemeId] = useState<AccentThemeId>(loadAccentTheme)
 
-  const { activity, isActive } = useWindowActivity()
+  // Collapse the sidebar automatically when the window becomes compact.
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 760) {
+        setSidebarExpanded(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    handleResize()
+
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const { isActive } = useWindowActivity()
   const { messages, isStreaming, sendMessage, stopGeneration, clearChat } = useChat()
 
   const accentTheme = getAccentTheme(accentThemeId)
 
   useEffect(() => {
     uiSounds.setSettings(soundSettings)
-    localStorage.setItem('ai-ui-sound-settings', JSON.stringify(soundSettings))
+  }, [soundSettings])
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      localStorage.setItem(
+        'ai-ui-sound-settings',
+        JSON.stringify(soundSettings),
+      )
+    }, 250)
+
+    return () => window.clearTimeout(timeoutId)
   }, [soundSettings])
 
   useEffect(() => {
@@ -119,8 +150,8 @@ function MainApp() {
       void uiSounds.unlock()
     }
 
-    window.addEventListener('pointerdown', unlock, { once: true })
-    window.addEventListener('keydown', unlock, { once: true })
+    window.addEventListener('pointerdown', unlock)
+    window.addEventListener('keydown', unlock)
 
     return () => {
       window.removeEventListener('pointerdown', unlock)
@@ -156,7 +187,13 @@ function MainApp() {
   }
 
   return (
-    <main
+    <motion.main
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{
+        duration: 0.42,
+        ease: [0.22, 1, 0.36, 1],
+      }}
       className="relative flex h-screen w-screen overflow-hidden bg-[#020509] p-3 text-white sm:p-5"
       style={themeStyle}
     >
@@ -178,67 +215,50 @@ function MainApp() {
         />
       </div>
 
-      <div className="relative z-10 flex h-full w-full gap-3 sm:gap-5">
+      <div className="relative z-10 flex h-full min-h-0 w-full min-w-0 gap-3 sm:gap-5">
         {/* SIDEBAR */}
         <motion.aside
           animate={{
             width: sidebarExpanded ? 256 : 76,
           }}
           transition={spring}
-          className="relative flex h-full shrink-0 flex-col overflow-hidden rounded-[26px] border bg-[#071016]/85 backdrop-blur-2xl"
+          className="etna-glass-sidebar relative flex h-full shrink-0 flex-col overflow-hidden rounded-[26px] border backdrop-blur-2xl"
           style={{
-            borderColor: accentTheme.border,
-            boxShadow: `0 0 35px ${accentTheme.glow}`,
+            borderColor: 'rgba(205,225,240,0.14)',
+            background: 'rgba(8,14,21,0.60)',
+            boxShadow: '0 22px 70px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.07)',
           }}
         >
-          {/* DECORATIVE AMBIENT BORDER RING (PAUSES ON AMBIENT/SUSPENDED) */}
-          {isActive ? (
+          {/* STATIC GLASS EDGE */}
+          <div className="pointer-events-none absolute inset-0 rounded-[26px] border border-white/[0.045]" />
+          <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+          {/* ETNA SIDEBAR BRANDING */}
+          <div className="relative flex h-[94px] shrink-0 items-center px-4">
             <motion.div
               animate={{
-                opacity: [0.18, 0.42, 0.18],
+                opacity: sidebarExpanded ? 1 : 0,
+                scale: sidebarExpanded ? 1 : 0.94,
               }}
-              transition={{
-                duration: 3.5,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-              className="pointer-events-none absolute inset-0 rounded-[26px] ring-1 ring-inset"
-              style={{
-                boxShadow: `inset 0 0 0 1px ${accentTheme.border}`,
-              }}
-            />
-          ) : (
-            <div
-              className="pointer-events-none absolute inset-0 rounded-[26px] ring-1 ring-inset opacity-25"
-              style={{
-                boxShadow: `inset 0 0 0 1px ${accentTheme.border}`,
-              }}
-            />
-          )}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap"
+              aria-hidden="true"
+            >
+              <span className="etna-sidebar-wordmark">ETNA</span>
+            </motion.div>
 
-          {/* SIDEBAR TOGGLE */}
-          <div className="flex items-center justify-center p-3 sm:p-4">
             <motion.button
-              whileHover={{ scale: 1.025 }}
-              whileTap={{ scale: 0.96 }}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.94 }}
+              transition={spring}
               type="button"
               onMouseEnter={() => uiSounds.play('hover')}
               onClick={handleToggle}
-              className={[
-                'flex h-12 items-center justify-center rounded-xl',
-                'border bg-white/[0.025] transition-colors',
-                sidebarExpanded ? 'w-12' : 'w-full',
-              ].join(' ')}
-              style={{
-                borderColor: 'rgba(255,255,255,0.10)',
-                color: 'rgba(255,255,255,0.65)',
-              }}
+              className="relative z-10 ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.035] text-white/65 transition-colors hover:bg-white/[0.09] hover:text-white"
               aria-label={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
             >
               <motion.div
-                animate={{
-                  rotate: sidebarExpanded ? 0 : 180,
-                }}
+                animate={{ rotate: sidebarExpanded ? 0 : 180 }}
                 transition={spring}
               >
                 {sidebarExpanded ? (
@@ -250,8 +270,11 @@ function MainApp() {
             </motion.button>
           </div>
 
+          {/* BRAND SEPARATOR */}
+          <div className="mx-5 mb-5 h-px shrink-0 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+
           {/* SIDEBAR ACTIONS */}
-          <nav className="flex flex-col gap-2 px-3">
+          <nav className="mt-1 flex flex-col gap-2 px-3">
             <SidebarButton
               icon={<MessageSquarePlus size={19} strokeWidth={1.7} />}
               label="New Chat"
@@ -270,66 +293,14 @@ function MainApp() {
             />
           </nav>
 
-          {/* SIDEBAR FOOTER */}
-          <motion.div
-            animate={{
-              opacity: sidebarExpanded ? 1 : 0,
-            }}
-            transition={{
-              duration: 0.18,
-            }}
-            className="mt-auto px-4 pb-4"
-          >
-            <div className="border-t border-white/5 pt-4">
-              <div className="text-[9px] uppercase tracking-[0.28em] text-white/40">
-                Interface Subsystem
-              </div>
-
-              <div className="mt-2 flex items-center gap-2">
-                {isActive ? (
-                  <motion.span
-                    animate={{
-                      opacity: [0.35, 1, 0.35],
-                      scale: [0.9, 1, 0.9],
-                    }}
-                    transition={{
-                      duration: 2.2,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                    className="h-1.5 w-1.5 rounded-full"
-                    style={{
-                      background: accentTheme.primary,
-                      boxShadow: `0 0 9px ${accentTheme.glowStrong}`,
-                    }}
-                  />
-                ) : (
-                  <span
-                    className="h-1.5 w-1.5 rounded-full opacity-60"
-                    style={{
-                      background: accentTheme.primary,
-                    }}
-                  />
-                )}
-
-                <span className="text-[10px] uppercase tracking-[0.2em] text-white/50">
-                  {activity === 'active'
-                    ? 'Online'
-                    : activity === 'ambient'
-                    ? 'Standby'
-                    : 'Suspended'}
-                </span>
-              </div>
-            </div>
-          </motion.div>
         </motion.aside>
 
         {/* MAIN CHAT & CANVAS WINDOW */}
         <motion.section
-          layout
-          className="relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-[26px] border bg-[#071016]/75 backdrop-blur-2xl"
+          className="etna-glass-main relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[26px] border backdrop-blur-2xl"
           style={{
             borderColor: accentTheme.border,
+            background: 'rgba(8,14,21,0.54)',
             boxShadow: `0 0 45px ${accentTheme.glow}`,
           }}
         >
@@ -390,14 +361,16 @@ function MainApp() {
           </AnimatePresence>
         </motion.section>
       </div>
-    </main>
+    </motion.main>
   )
 }
 
 export default function App() {
   return (
     <WindowActivityProvider>
-      <MainApp />
+      <MotionConfig reducedMotion="user">
+        <MainApp />
+      </MotionConfig>
     </WindowActivityProvider>
   )
 }
@@ -424,24 +397,43 @@ const SidebarButton = memo(function SidebarButton({
       whileHover={{
         scale: 1.015,
         x: expanded ? 2 : 0,
+        backgroundColor: active
+          ? 'rgba(255,255,255,0.095)'
+          : 'rgba(255,255,255,0.065)',
+        borderColor: active
+          ? 'rgba(215,230,240,0.22)'
+          : 'rgba(255,255,255,0.12)',
+        color: '#F1F5F9',
       }}
       whileTap={{
         scale: 0.96,
       }}
+      transition={spring}
       type="button"
       aria-label={label}
+      aria-expanded={label === 'Settings' ? active : undefined}
+      title={!expanded ? label : undefined}
+      data-active={active ? 'true' : 'false'}
       onMouseEnter={() => uiSounds.play('hover')}
       onClick={onClick}
       className={[
-        'flex h-12 items-center rounded-xl border',
+        'etna-sidebar-button relative flex h-12 items-center rounded-xl border',
         expanded ? 'gap-3 px-3' : 'justify-center',
       ].join(' ')}
       style={{
-        borderColor: active ? accent.border : 'rgba(255,255,255,0.07)',
-        background: active ? accent.soft : 'rgba(255,255,255,0.025)',
-        color: active ? accent.primary : 'rgba(255,255,255,0.75)',
+        borderColor: active ? 'rgba(215,230,240,0.15)' : 'rgba(255,255,255,0.065)',
+        background: active ? 'rgba(255,255,255,0.075)' : 'rgba(255,255,255,0.025)',
+        color: active ? '#F1F5F9' : 'rgba(255,255,255,0.72)',
       }}
     >
+      {active && (
+        <span
+          aria-hidden="true"
+          className="absolute bottom-3 left-0 top-3 w-[2px] rounded-full"
+          style={{ background: accent.primary }}
+        />
+      )}
+
       {icon}
 
       <motion.span

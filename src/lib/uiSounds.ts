@@ -9,6 +9,7 @@ export type UISound =
 
 export type SoundSettings = {
   master: boolean
+  volume: number
   hover: boolean
   buttons: boolean
   navigation: boolean
@@ -18,6 +19,7 @@ export type SoundSettings = {
 
 export const defaultSettings: SoundSettings = {
   master: true,
+  volume: 90,
   hover: true,
   buttons: true,
   navigation: true,
@@ -31,18 +33,39 @@ class UISoundEngine {
   private compressor: DynamicsCompressorNode | null = null
   private settings: SoundSettings = { ...defaultSettings }
   private typingIndex = 0
+  private userUnlocked = false
 
   private noiseBuffer: AudioBuffer | null = null
 
-  setSettings(settings: SoundSettings) {
-    this.settings = { ...settings }
+  private getOutputGain() {
+    return this.settings.master
+      ? (this.settings.volume / 100) * 0.9
+      : 0
+  }
 
-    if (this.masterGain) {
-      this.masterGain.gain.setTargetAtTime(
-        settings.master ? 0.45 : 0,
-        this.context?.currentTime ?? 0,
-        0.02,
-      )
+  setSettings(settings: SoundSettings) {
+    const requestedVolume = Number.isFinite(settings.volume)
+      ? settings.volume
+      : defaultSettings.volume
+
+    this.settings = {
+      ...settings,
+      volume: Math.round(Math.max(0, Math.min(100, requestedVolume))),
+    }
+
+    if (this.masterGain && this.context) {
+      const now = this.context.currentTime
+      const gain = this.masterGain.gain
+
+      if (typeof gain.cancelAndHoldAtTime === 'function') {
+        gain.cancelAndHoldAtTime(now)
+      } else {
+        const currentValue = gain.value
+        gain.cancelScheduledValues(now)
+        gain.setValueAtTime(currentValue, now)
+      }
+
+      gain.setTargetAtTime(this.getOutputGain(), now, 0.045)
     }
   }
 
@@ -67,7 +90,7 @@ class UISoundEngine {
   }
 
   private ensureContext(): boolean {
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' || !this.userUnlocked) {
       return false
     }
 
@@ -88,7 +111,7 @@ class UISoundEngine {
         this.context = new AudioContextClass()
 
         this.masterGain = this.context.createGain()
-        this.masterGain.gain.value = this.settings.master ? 0.45 : 0
+        this.masterGain.gain.value = this.getOutputGain()
 
         this.compressor = this.context.createDynamicsCompressor()
         this.compressor.threshold.value = -20
@@ -97,22 +120,20 @@ class UISoundEngine {
         this.compressor.attack.value = 0.003
         this.compressor.release.value = 0.12
 
-        this.masterGain.connect(this.compressor)
-        this.compressor.connect(this.context.destination)
+        this.compressor.connect(this.masterGain)
+        this.masterGain.connect(this.context.destination)
       } catch {
         return false
       }
-    }
-
-    if (this.context.state === 'suspended') {
-      void this.context.resume()
     }
 
     return true
   }
 
   async unlock() {
+    this.userUnlocked = true
     this.ensureContext()
+
     if (this.context && this.context.state === 'suspended') {
       try {
         await this.context.resume()
@@ -123,7 +144,11 @@ class UISoundEngine {
   }
 
   play(sound: UISound) {
-    if (!this.settings.master || !this.isCategoryEnabled(sound)) {
+    if (
+      !this.settings.master ||
+      this.settings.volume <= 0 ||
+      !this.isCategoryEnabled(sound)
+    ) {
       return
     }
 
@@ -227,7 +252,7 @@ class UISoundEngine {
     volume: number,
     delay = 0,
   ) {
-    if (!this.context || !this.masterGain) {
+    if (!this.context || !this.masterGain || !this.compressor) {
       return
     }
 
@@ -271,7 +296,13 @@ class UISoundEngine {
 
     oscillator.connect(filter)
     filter.connect(gain)
-    gain.connect(this.masterGain)
+    gain.connect(this.compressor)
+
+    oscillator.onended = () => {
+      oscillator.disconnect()
+      filter.disconnect()
+      gain.disconnect()
+    }
 
     oscillator.start(now)
     oscillator.stop(now + duration)
@@ -282,7 +313,7 @@ class UISoundEngine {
     volume: number,
     delay = 0,
   ) {
-    if (!this.context || !this.masterGain) {
+    if (!this.context || !this.masterGain || !this.compressor) {
       return
     }
 
@@ -315,7 +346,13 @@ class UISoundEngine {
 
     source.connect(filter)
     filter.connect(gain)
-    gain.connect(this.masterGain)
+    gain.connect(this.compressor)
+
+    source.onended = () => {
+      source.disconnect()
+      filter.disconnect()
+      gain.disconnect()
+    }
 
     source.start(now)
     source.stop(now + duration)

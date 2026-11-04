@@ -1,9 +1,9 @@
 import { useRef, useEffect, useState, memo } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { ArrowDown } from 'lucide-react'
 import type { ChatMessage } from '../lib/chat/types'
 import type { AccentTheme } from '../lib/themes'
 import { MessageItem } from './MessageItem'
-import { VMark } from './VMark'
 
 interface ChatViewportProps {
   messages: ChatMessage[]
@@ -60,34 +60,41 @@ export const ChatViewport = memo(function ChatViewport({
   if (messages.length === 0) {
     return (
       <div
-        className="relative flex h-full w-full flex-1 items-center justify-center overflow-hidden"
+        className="relative flex h-full min-h-0 w-full min-w-0 flex-1 overflow-hidden"
         data-testid="empty-canvas"
-      >
-        <VMark />
-      </div>
+      />
     )
   }
 
   return (
-    <div className="relative flex h-full w-full flex-1 flex-col overflow-hidden">
+    <div className="relative flex h-full min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden">
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto overflow-x-hidden py-4 scroll-smooth"
+        className="etna-chat-scroll min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden pt-5 pb-4 scroll-smooth"
         role="log"
         aria-live="polite"
         aria-label="Conversation history"
       >
-        <div className="mx-auto flex max-w-4xl flex-col space-y-3 pb-6">
-          {messages.map((msg) => (
-            <MessageItem key={msg.id} message={msg} theme={theme} />
-          ))}
+        <div className="mx-auto flex w-full min-w-0 max-w-4xl flex-col space-y-3 pb-6">
+          <AnimatePresence initial={false}>
+            {messages.map((msg) => (
+              <MessageItem key={msg.id} message={msg} theme={theme} />
+            ))}
+          </AnimatePresence>
         </div>
       </div>
 
       {/* FLOATING RESUME AUTO-SCROLL CONTROL */}
-      {showScrollBottom && (
-        <div className="pointer-events-none absolute bottom-3 right-6 z-20">
+      <AnimatePresence>
+        {showScrollBottom && (
+          <motion.div
+            initial={{ opacity: 0, y: 8, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 5, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="pointer-events-none absolute bottom-3 right-6 z-20"
+          >
           <button
             type="button"
             onClick={scrollToBottom}
@@ -103,8 +110,9 @@ export const ChatViewport = memo(function ChatViewport({
               Resume Auto-Scroll
             </span>
           </button>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 })
